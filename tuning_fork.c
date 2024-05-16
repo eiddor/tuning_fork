@@ -163,6 +163,20 @@ typedef struct App {
     Widget* widget;
 } App;
 
+// menu item indices
+
+typedef enum {
+    TuningForkMainMenuSceneGuitar,
+    TuningForkMainMenuSceneBass,
+    TuningForkMainMenuSceneMisc,
+} TuningForkMainMenuSceneIndex;
+
+// custom events array
+typedef enum {
+    TuningForksMainMenuSceneGuitarEvent,
+    TuningForkMainMenuSceneGuitarEvent,
+} TuningForkMainMenuEvent;
+
 //stub menu callback function
 
 void tuning_fork_menu_callback(void* context, uint32_t index) {
@@ -178,18 +192,33 @@ The code does the following:
 
 Reset the submenu.
 Set the header of the submenu to "Tuning Categories".
-Add a menu item with the text "Guitar" and the index 0.
-Add a menu item with the text "Bass" and the index 1.
-Add a menu item with the text "Misc" and the index 2.
+Add a menu item with the text "Guitar" and the index TuningForkMainMenuSceneGuitar (0).
+Add a menu item with the text "Bass" and the index TuningForkMainMenuSceneBass (1).
+Add a menu item with the text "Misc" and the index TuningForkMainMenuSceneMisc (2).
 */
 
 void tuning_fork_main_menu_scene_on_enter(void* context) {
     App* app = context;
     submenu_reset(app->submenu);
     submenu_set_header(app->submenu, "Tuning Categories");
-    submenu_add_item(app->submenu, "Guitar", 0, tuning_fork_menu_callback, app);
-    submenu_add_item(app->submenu, "Bass", 1, tuning_fork_menu_callback, app);
-    submenu_add_item(app->submenu, "Misc", 2, tuning_fork_menu_callback, app);
+    submenu_add_item(
+        app->submenu, 
+        "Guitar", 
+        TuningForkMainMenuSceneGuitar, 
+        tuning_fork_menu_callback, 
+        app);
+    submenu_add_item(
+        app->submenu, 
+        "Bass", 
+        TuningForkMainMenuSceneBass, 
+        tuning_fork_menu_callback, 
+        app);
+    submenu_add_item(
+        app->submenu, 
+        "Misc", 
+        TuningForkMainMenuSceneMisc, 
+        tuning_fork_menu_callback, 
+        app);
     view_dispatcher_switch_to_view(app->view_dispatcher, TuningForkSubmenuView);
 }
 
