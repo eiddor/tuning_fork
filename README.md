@@ -4,3 +4,5 @@ The two differences will be:
 
 - Code will use Scenes/Views instead of Viewport
 - Tunings will be split into categories for Guitar, Bass, and Misc
+
+![categories](img/tuning_cats.png)
