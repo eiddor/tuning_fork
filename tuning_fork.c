@@ -1,19 +1,31 @@
+// include standard modules
 #include <furi.h>
 #include <furi_hal.h>
 #include <input/input.h>
 #include <string.h>
 #include <stdlib.h>
 
+//include GUI modules
 #include <gui/gui.h>
+
+//remove these when I'm done
 #include <gui/elements.h>
 #include <gui/canvas.h>
+
+//include View Dispatcher, Scene Manager, and modules
+#include <gui/view_dispatcher.h>
+#include <gui/scene_manager.h>
+#include <gui/modules/widget.h>
+#include <gui/modules/submenu.h>
 
 #include <notification/notification.h>
 #include <notification/notification_messages.h>
 
+//define notes and tunings in these files
 #include "notes.h"
 #include "tunings.h"
 
+//define our scenes
 typedef enum {
     TuningForkMainMenuScene,
     TuningForkGuitarScene,
@@ -23,6 +35,10 @@ typedef enum {
     TuningForkSceneCount,
 } TuningForkScene;
 
+//define our views
+typedef enum { TuningForkSubmenuView, TuningForkWidgetView } TuningForkView;
+
+//used by old code
 enum Page { Tunings, Notes };
 
 typedef struct {
