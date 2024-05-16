@@ -173,15 +173,43 @@ typedef enum {
 
 // custom events array
 typedef enum {
-    TuningForksMainMenuSceneGuitarEvent,
     TuningForkMainMenuSceneGuitarEvent,
+    TuningForkMainMenuSceneBassEvent,
+    TuningForkMainMenuSceneMiscEvent,
 } TuningForkMainMenuEvent;
 
-//stub menu callback function
+//Main menucallback function
+/*The code does the following:
+
+When the menu item with the index TuningForkMainMenuSceneGuitar is selected, 
+the function fires the TuningForkMainMenuSceneGuitarEvent custom event.
+When the menu item with the index TuningForkMainMenuSceneBass is selected, 
+the function fires the TuningForkMainMenuSceneBassEvent custom event.
+When the menu item with the index TuningForkMainMenuSceneMisc is selected,
+the function fires the TuningForkMainMenuSceneMiscEVent custom event.
+These custom events will be handled in the tuning_fork_main_menu_scene_on_event function
+
+*/
 
 void tuning_fork_menu_callback(void* context, uint32_t index) {
-    UNUSED(context);
-    UNUSED(index);
+    App* app = context;
+    switch(index) {
+    case TuningForkMainMenuSceneGuitar:
+        scene_manager_handle_custom_event(
+            app->scene_manager,
+            TuningForkMainMenuSceneGuitarEvent);
+        break;
+    case TuningForkMainMenuSceneBass:
+        scene_manager_handle_custom_event(
+            app->scene_manager,
+            TuningForkMainMenuSceneBassEvent);
+        break;
+    case TuningForkMainMenuSceneMisc:
+        scene_manager_handle_custom_event(
+            app->scene_manager,
+            TuningForkMainMenuSceneMiscEvent);
+        break;
+    }
 }
 
 //functions for each event (enter, event, exit) in each scene
@@ -222,13 +250,47 @@ void tuning_fork_main_menu_scene_on_enter(void* context) {
     view_dispatcher_switch_to_view(app->view_dispatcher, TuningForkSubmenuView);
 }
 
+//Main Menu on_event function - This is where we handle inputs on the mainmenu
+/*
+The code does the following:
+
+When the TuningForkMainMenuSceneGuitarEvent custom event is received,
+the function navigates to the TuningForkCategoryScene scene.
+When the TuningForkMainMenuSceneBassEvent custom event is received, 
+the function navigates to the TuningForkCategoryScene scene.
+When the TuningForkMainMenuSceneMiscEvent custom event is received, 
+the function navigates to the TuningForkCategoryScene scene.
+The function returns true if the event was consumed, otherwise it returns false.
+*/
+
 bool tuning_fork_main_menu_scene_on_event(void* context, SceneManagerEvent event) {
-    UNUSED(context);
-    UNUSED(event);
-    return false; // event not handled.
+    App* app = context;
+    bool consumed = false;
+    switch(event.type) {
+    case SceneManagerEventTypeCustom:
+        switch(event.event) {
+        case TuningForkMainMenuSceneGuitarEvent:
+            scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
+            consumed = true;
+            break;
+        case TuningForkMainMenuSceneBassEvent:
+            scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
+            consumed = true;
+            break;
+        case TuningForkMainMenuSceneMiscEvent:
+            scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
+            consumed = true;
+            break;
+        }
+        break;
+    default:
+        break;
+    }
+    return consumed;
 }
 void tuning_fork_main_menu_scene_on_exit(void* context) {
-    UNUSED(context);
+    App* app = context;
+    submenu_reset(app->submenu);
 }
 
 void tuning_fork_category_scene_on_enter(void* context) {
