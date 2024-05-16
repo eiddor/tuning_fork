@@ -28,11 +28,9 @@
 //define our scenes
 typedef enum {
     TuningForkMainMenuScene,
-    TuningForkGuitarScene,
-    TuningForkBassScene,
-    TuningForkMiscScene,
+    TuningForkCategoryScene,
     TuningForkTuningScene,
-    TuningForkSceneCount,
+    TuningForkSceneCount
 } TuningForkScene;
 
 //define our views
@@ -146,6 +144,72 @@ static void replay(TuningForkState* tuning_fork_state) {
     stop();
     play(tuning_fork_state);
 }
+
+//define our App object
+typedef struct App {
+    SceneManager* scene_manager;
+    ViewDispatcher* view_dispatcher;
+    Submenu* submenu;
+    Widget* widget;
+} App;
+
+//stub functions for each event (enter, event, exit) in each scene
+void tuning_fork_main_menu_scene_on_enter(void* context) {
+    UNUSED(context);
+}
+bool tuning_fork_main_menu_scene_on_event(void* context, SceneManagerEvent event) {
+    UNUSED(context);
+    UNUSED(event);
+    return false; // event not handled.
+}
+void tuning_fork_main_menu_scene_on_exit(void* context) {
+    UNUSED(context);
+}
+
+void tuning_fork_category_scene_on_enter(void* context) {
+    UNUSED(context);
+}
+bool tuning_fork_category_scene_on_event(void* context, SceneManagerEvent event) {
+    UNUSED(context);
+    UNUSED(event);
+    return false; // event not handled.
+}
+void tuning_fork_category_scene_on_exit(void* context) {
+    UNUSED(context);
+}
+
+void tuning_fork_tuning_input_scene_on_enter(void* context) {
+    UNUSED(context);
+}
+bool tuning_fork_tuning_input_scene_on_event(void* context, SceneManagerEvent event) {
+    UNUSED(context);
+    UNUSED(event);
+    return false; // event not handled.
+}
+void tuning_fork_tuning_input_scene_on_exit(void* context) {
+    UNUSED(context);
+}
+
+//array of on_enter handlers/stub functions
+void (*const tuning_fork_scene_on_enter_handlers[])(void*) = {
+    tuning_fork_main_menu_scene_on_enter,
+    tuning_fork_category_scene_on_enter,
+    tuning_fork_tuning_input_scene_on_enter};
+
+//array of on_event handlers/stub functions
+
+bool (*const tuning_fork_scene_on_event_handlers[])(void*, SceneManagerEvent) = {
+    tuning_fork_main_menu_scene_on_event,
+    tuning_fork_category_scene_on_event,
+    tuning_fork_tuning_input_scene_on_event};
+
+//array of on_exit handlers/stub functions
+
+void (*const tuning_fork_scene_on_exit_handlers[])(void*) = {
+    tuning_fork_main_menu_scene_on_exit,
+    tuning_fork_category_scene_on_exit,
+    tuning_fork_tuning_input_scene_on_exit};
+
 int32_t tuning_fork_app(void* p) {
     UNUSED(p);
     furi_delay_ms(5000);
