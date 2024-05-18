@@ -42,14 +42,14 @@ typedef enum {
 } TuningForkView;
 
 //used by old code to keep track of which page the user is on - I can probably get rid of this once
-//everything else works
+//everything else works but this could be useful for development
 
 enum Page {
     Tunings, 
     Notes 
 };
 
-//declare my categories
+//declare my tuning categories
 
 enum Categories {
     Guitar,
@@ -57,7 +57,7 @@ enum Categories {
     Misc
 };
 
-//MAYBE decalre my TuningForkState struct
+//Declare my TuningForkState struct for tracking state
 typedef struct {
     FuriMutex* mutex;
     bool playing;
@@ -70,22 +70,22 @@ typedef struct {
 } TuningForkState;
 
 
-// I think this pulls the current tuning variable from tuningForkState 
-//and I assume it's relating it to TUNING from tunings.h, but I'm not sure
-
+//Function to get current tuning
 static TUNING current_tuning(TuningForkState* tuningForkState) {
     return tuningForkState->tuning;
 }
 
+//Function to get current tuning note/string (as in string on an instrument)
 static NOTE current_tuning_note(TuningForkState* tuningForkState) {
     return current_tuning(tuningForkState).notes[tuningForkState->current_tuning_note_index];
 }
 
-
+//Get the current note's frequency from notes.h
 static float current_tuning_note_freq(TuningForkState* tuningForkState) {
     return current_tuning_note(tuningForkState).frequency;
 }
 
+//Get the current note's name
 static void current_tuning_note_label(TuningForkState* tuningForkState, char* outNoteLabel) {
     for(int i = 0; i < 20; ++i) {
         outNoteLabel[i] = current_tuning_note(tuningForkState).label[i];
@@ -101,13 +101,13 @@ static void current_tuning_label(TuningForkState* tuningForkState, char* outTuni
     }
 }
 
-// A bunch more function declarations that I have to understand better
-
+// Updates the current tuning and tuning note
 static void updateTuning(TuningForkState* tuning_fork_state) {
     tuning_fork_state->tuning = TuningList[tuning_fork_state->current_tuning_index];
     tuning_fork_state->current_tuning_note_index = 0;
 }
 
+//Move to the next tuning (loop around if at the end) and update tuning
 static void next_tuning(TuningForkState* tuning_fork_state) {
     if(tuning_fork_state->current_tuning_index == TUNINGS_COUNT - 1) {
         tuning_fork_state->current_tuning_index = 0;
@@ -117,6 +117,7 @@ static void next_tuning(TuningForkState* tuning_fork_state) {
     updateTuning(tuning_fork_state);
 }
 
+//Move to the previous tuning (loop around if at the end) and update tuning
 static void prev_tuning(TuningForkState* tuning_fork_state) {
     if(tuning_fork_state->current_tuning_index - 1 < 0) {
         tuning_fork_state->current_tuning_index = TUNINGS_COUNT - 1;
@@ -126,6 +127,7 @@ static void prev_tuning(TuningForkState* tuning_fork_state) {
     updateTuning(tuning_fork_state);
 }
 
+//Move to the next note (loop around if at the end)
 static void next_note(TuningForkState* tuning_fork_state) {
     if(tuning_fork_state->current_tuning_note_index ==
         current_tuning(tuning_fork_state).notes_length - 1) {
@@ -135,6 +137,7 @@ static void next_note(TuningForkState* tuning_fork_state) {
     }
 }
 
+//Move to the previous note (loop around if at the end)
 static void prev_note(TuningForkState* tuning_fork_state) {
     if(tuning_fork_state->current_tuning_note_index == 0) {
         tuning_fork_state->current_tuning_note_index =
@@ -144,7 +147,7 @@ static void prev_note(TuningForkState* tuning_fork_state) {
     }
 }
 
-
+//Play note
 static void play(TuningForkState* tuning_fork_state) {
     if(furi_hal_speaker_is_mine() || furi_hal_speaker_acquire(1000)) {
         furi_hal_speaker_start(
@@ -152,6 +155,7 @@ static void play(TuningForkState* tuning_fork_state) {
     }
 }
 
+//Stop playing note and release speaker device
 static void stop() {
     if(furi_hal_speaker_is_mine()) {
         furi_hal_speaker_stop();
@@ -159,26 +163,27 @@ static void stop() {
     }
 }
 
-/*
+/* //I need to figure out how to handle up/down
+//Increase volume
 static void increase_volume(TuningForkState* tuning_fork_state) {
     if(tuning_fork_state->volume < 1.0f) {
         tuning_fork_state->volume += 0.1f;
     }
 }
 
+//Decrease volume
 static void decrease_volume(TuningForkState* tuning_fork_state) {
     if(tuning_fork_state->volume > 0.0f) {
         tuning_fork_state->volume -= 0.1f;
     }
 }
 
+//cycle play
 static void replay(TuningForkState* tuning_fork_state) {
     stop();
     play(tuning_fork_state);
 }
-*/
-
-
+ */
 //define our App object
 typedef struct App {
     SceneManager* scene_manager;
@@ -255,44 +260,54 @@ void tuning_fork_menu_callback(void* context, uint32_t index) {
 
 void tuning_fork_category_callback(GuiButtonType result, InputType type, void* context) {
     App *app = context;
-    UNUSED(type);
-    switch (result) {
-    case GuiButtonTypeCenter:
-        view_dispatcher_send_custom_event(
-            app->view_dispatcher, 
-            TuningForkCategorySelectEvent);
-        break;
-    case GuiButtonTypeLeft:
-        view_dispatcher_send_custom_event(
-            app->view_dispatcher, 
-            TuningForkCategoryPrevEvent);
-        break;
-    case GuiButtonTypeRight:
-        view_dispatcher_send_custom_event(
-            app->view_dispatcher, 
-            TuningForkCategoryNextEvent);
+    switch(type)
+    {
+    case InputTypeShort:
+        switch (result) {
+        case GuiButtonTypeCenter:
+            view_dispatcher_send_custom_event(
+                app->view_dispatcher, 
+                TuningForkCategorySelectEvent);
+            break;
+        case GuiButtonTypeLeft:
+            view_dispatcher_send_custom_event(
+                app->view_dispatcher, 
+                TuningForkCategoryPrevEvent);
+            break;
+        case GuiButtonTypeRight:
+            view_dispatcher_send_custom_event(
+                app->view_dispatcher, 
+                TuningForkCategoryNextEvent);
+            break;
+        }
+    default:
         break;
     }
 }
 
 void tuning_fork_tuning_callback(GuiButtonType result, InputType type, void* context) {
     App *app = context;
-    UNUSED(type);
-    switch (result) {
-    case GuiButtonTypeCenter:
-        view_dispatcher_send_custom_event(
-            app->view_dispatcher, 
-            TuningForkTuningSelectEvent);
-        break;
-    case GuiButtonTypeLeft:
-        view_dispatcher_send_custom_event(
-            app->view_dispatcher, 
-            TuningForkTuningPrevEvent);
-        break;
-    case GuiButtonTypeRight:
-        view_dispatcher_send_custom_event(
-            app->view_dispatcher, 
-            TuningForkTuningNextEvent);
+    switch(type)
+    {
+    case InputTypeShort:
+        switch (result) {
+        case GuiButtonTypeCenter:
+            view_dispatcher_send_custom_event(
+                app->view_dispatcher, 
+                TuningForkTuningSelectEvent);
+            break;
+        case GuiButtonTypeLeft:
+            view_dispatcher_send_custom_event(
+                app->view_dispatcher, 
+                TuningForkTuningPrevEvent);
+            break;
+        case GuiButtonTypeRight:
+            view_dispatcher_send_custom_event(
+                app->view_dispatcher, 
+                TuningForkTuningNextEvent);
+            break;
+        }
+    default:
         break;
     }
 }
@@ -349,7 +364,6 @@ The function returns true if the event was consumed, otherwise it returns false.
 
 bool tuning_fork_main_menu_scene_on_event(void* context, SceneManagerEvent event) {
     App* app = context;
-    //TuningForkState* tuning_fork_state = context;
     bool consumed = false;
 
     switch(event.type) 
@@ -396,9 +410,7 @@ void tuning_fork_category_scene_on_enter(void* context) {
 
     char tuningLabel[20];
     current_tuning_label(app->tuning_fork_state, tuningLabel);
-
     widget_reset(app->widget);
-
     widget_add_string_element(
         app->widget,
         64,
@@ -408,21 +420,18 @@ void tuning_fork_category_scene_on_enter(void* context) {
         FontPrimary,
         tuningLabel
     );
- 
     widget_add_button_element(
         app->widget,
         GuiButtonTypeLeft,
         "Prev",
         tuning_fork_category_callback,
         app);
-
     widget_add_button_element(
         app->widget,
         GuiButtonTypeCenter,
         "Select",
         tuning_fork_category_callback,
         app);
-
     widget_add_button_element(
         app->widget,
         GuiButtonTypeRight,
@@ -434,7 +443,6 @@ void tuning_fork_category_scene_on_enter(void* context) {
 
 bool tuning_fork_category_scene_on_event(void* context, SceneManagerEvent event) {
     App* app = context;
-//    TuningForkState* tuning_fork_state = context;
 
     bool consumed = false;
     
@@ -447,10 +455,12 @@ bool tuning_fork_category_scene_on_event(void* context, SceneManagerEvent event)
             break;
         case TuningForkCategoryPrevEvent:
             prev_tuning(app->tuning_fork_state);
+            scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
             consumed = true;
             break;
         case TuningForkCategoryNextEvent:
             next_tuning(app->tuning_fork_state);
+            scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
             consumed = true;
             break;
         }
@@ -463,21 +473,15 @@ bool tuning_fork_category_scene_on_event(void* context, SceneManagerEvent event)
 
 void tuning_fork_category_scene_on_exit(void* context) {
     App* app = context;
-    submenu_reset(app->submenu);
+    widget_reset(app->widget);
 }
 
 void tuning_fork_tuning_scene_on_enter(void* context) {
     App* app = context;
 
- //   furi_assert(context);
-//    TuningForkState* tuning_fork_state = context;
- //   furi_mutex_acquire(tuning_fork_state->mutex, FuriWaitForever);
-
     char tuningNoteLabel[20];
     current_tuning_note_label(app->tuning_fork_state, tuningNoteLabel);
-
     widget_reset(app->widget);
-
     widget_add_string_element(
         app->widget,
         64,
@@ -487,21 +491,18 @@ void tuning_fork_tuning_scene_on_enter(void* context) {
         FontPrimary,
         tuningNoteLabel
     );
- 
     widget_add_button_element(
         app->widget,
         GuiButtonTypeLeft,
         "Prev",
         tuning_fork_tuning_callback,
         app);
-
     widget_add_button_element(
         app->widget,
         GuiButtonTypeCenter,
         "Play",
         tuning_fork_tuning_callback,
         app);
-
     widget_add_button_element(
         app->widget,
         GuiButtonTypeRight,
@@ -529,10 +530,12 @@ bool tuning_fork_tuning_scene_on_event(void* context, SceneManagerEvent event) {
             break;
         case TuningForkTuningPrevEvent:
             prev_note(app->tuning_fork_state);
+            scene_manager_next_scene(app->scene_manager, TuningForkTuningScene);
             consumed = true;
             break;
         case TuningForkTuningNextEvent:
             next_note(app->tuning_fork_state);
+            scene_manager_next_scene(app->scene_manager, TuningForkTuningScene);
             consumed = true;
             break;
         }
@@ -543,7 +546,8 @@ bool tuning_fork_tuning_scene_on_event(void* context, SceneManagerEvent event) {
     return consumed; // Did we handle this?
 }
 void tuning_fork_tuning_scene_on_exit(void* context) {
-    UNUSED(context);
+    App* app = context;
+    widget_reset(app->widget);
 }
 
 //array of on_enter handlers/stub functions
@@ -653,6 +657,7 @@ static void app_free(App* app) {
     view_dispatcher_free(app->view_dispatcher);
     submenu_free(app->submenu);
     widget_free(app->widget);
+    free(app->tuning_fork_state);
     free(app);
 }
 
@@ -678,7 +683,7 @@ static void tuning_fork_state_init(TuningForkState* const tuning_fork_state) {
     tuning_fork_state->category = Guitar;
     tuning_fork_state->volume = 1.0f;
     tuning_fork_state->tuning = GuitarStandard6;
-    tuning_fork_state->current_tuning_index = 2;
+    tuning_fork_state->current_tuning_index = 0;
     tuning_fork_state->current_tuning_note_index = 0;
 }
 
@@ -686,18 +691,6 @@ static void tuning_fork_state_init(TuningForkState* const tuning_fork_state) {
 
 int32_t tuning_fork_app(void* p) {
     UNUSED(p);
-
-// I think this is the right place for initializing our variable array, but I could be wrong
-
-//    TuningForkState* tuning_fork_state = malloc(sizeof(TuningForkState));
-//    tuning_fork_state_init(tuning_fork_state);
-/* 
-    tuning_fork_state->mutex = furi_mutex_alloc(FuriMutexTypeNormal);
-    if(!tuning_fork_state->mutex) {
-        FURI_LOG_E("TuningFork", "cannot create mutex\r\n");
-        free(tuning_fork_state);
-        return 255;
-    } */
 
     App* app = app_alloc();
     app->tuning_fork_state = tuning_fork_state_alloc();
@@ -714,5 +707,6 @@ int32_t tuning_fork_app(void* p) {
     view_dispatcher_run(app->view_dispatcher);
 
     app_free(app);
+    
     return 0;
 }
