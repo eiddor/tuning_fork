@@ -86,13 +86,12 @@ static float current_tuning_note_freq(TuningForkState* tuningForkState) {
     return current_tuning_note(tuningForkState).frequency;
 }
 
-/*
 static void current_tuning_note_label(TuningForkState* tuningForkState, char* outNoteLabel) {
     for(int i = 0; i < 20; ++i) {
         outNoteLabel[i] = current_tuning_note(tuningForkState).label[i];
     }
 }
-*/
+
 
 // The name(s) of our current tuning
 
@@ -129,7 +128,7 @@ static void prev_tuning(TuningForkState* tuning_fork_state) {
 
 static void next_note(TuningForkState* tuning_fork_state) {
     if(tuning_fork_state->current_tuning_note_index ==
-       current_tuning(tuning_fork_state).notes_length - 1) {
+        current_tuning(tuning_fork_state).notes_length - 1) {
         tuning_fork_state->current_tuning_note_index = 0;
     } else {
         tuning_fork_state->current_tuning_note_index += 1;
@@ -186,7 +185,7 @@ typedef struct App {
     ViewDispatcher* view_dispatcher;
     Submenu* submenu;
     Widget* widget;
-//    TuningForkState* tuning_fork_state;
+    TuningForkState* tuning_fork_state;
 } App;
 
 // menu item indices
@@ -359,17 +358,17 @@ bool tuning_fork_main_menu_scene_on_event(void* context, SceneManagerEvent event
         switch(event.event) 
         {
         case TuningForkMainMenuSceneGuitarEvent:
-            //tuning_fork_state->category = Guitar;
+            app->tuning_fork_state->category = Guitar;
             scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
             consumed = true;
             break;
         case TuningForkMainMenuSceneBassEvent:
-            //tuning_fork_state->category = Bass;
+            app->tuning_fork_state->category = Bass;
             scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
             consumed = true;
             break;
         case TuningForkMainMenuSceneMiscEvent:
-            //tuning_fork_state->category = Misc;
+            app->tuning_fork_state->category = Misc;
             scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
             consumed = true;
             break;
@@ -392,20 +391,20 @@ void tuning_fork_category_scene_on_enter(void* context) {
     App* app = context;
 
  //   furi_assert(context);
-    TuningForkState* tuning_fork_state = context;
+ //   TuningForkState* tuning_fork_state = context;
  //   furi_mutex_acquire(tuning_fork_state->mutex, FuriWaitForever);
 
     char tuningLabel[20];
-    current_tuning_label(tuning_fork_state, tuningLabel);
+    current_tuning_label(app->tuning_fork_state, tuningLabel);
 
     widget_reset(app->widget);
 
     widget_add_string_element(
         app->widget,
-        25,
+        64,
         25,
         AlignCenter,
-        AlignBottom,
+        AlignCenter,
         FontPrimary,
         tuningLabel
     );
@@ -435,7 +434,7 @@ void tuning_fork_category_scene_on_enter(void* context) {
 
 bool tuning_fork_category_scene_on_event(void* context, SceneManagerEvent event) {
     App* app = context;
-    TuningForkState* tuning_fork_state = context;
+//    TuningForkState* tuning_fork_state = context;
 
     bool consumed = false;
     
@@ -447,11 +446,11 @@ bool tuning_fork_category_scene_on_event(void* context, SceneManagerEvent event)
             consumed = true;
             break;
         case TuningForkCategoryPrevEvent:
-            prev_tuning(tuning_fork_state);
+            prev_tuning(app->tuning_fork_state);
             consumed = true;
             break;
         case TuningForkCategoryNextEvent:
-            next_tuning(tuning_fork_state);
+            next_tuning(app->tuning_fork_state);
             consumed = true;
             break;
         }
@@ -471,22 +470,22 @@ void tuning_fork_tuning_scene_on_enter(void* context) {
     App* app = context;
 
  //   furi_assert(context);
-    TuningForkState* tuning_fork_state = context;
+//    TuningForkState* tuning_fork_state = context;
  //   furi_mutex_acquire(tuning_fork_state->mutex, FuriWaitForever);
 
-    char tuningLabel[20];
-    current_tuning_label(tuning_fork_state, tuningLabel);
+    char tuningNoteLabel[20];
+    current_tuning_note_label(app->tuning_fork_state, tuningNoteLabel);
 
     widget_reset(app->widget);
 
     widget_add_string_element(
         app->widget,
-        25,
+        64,
         25,
         AlignCenter,
-        AlignBottom,
+        AlignCenter,
         FontPrimary,
-        tuningLabel
+        tuningNoteLabel
     );
  
     widget_add_button_element(
@@ -512,7 +511,7 @@ void tuning_fork_tuning_scene_on_enter(void* context) {
     view_dispatcher_switch_to_view(app->view_dispatcher, TuningForkWidgetView);
 }
 bool tuning_fork_tuning_scene_on_event(void* context, SceneManagerEvent event) {
-    TuningForkState* tuning_fork_state = context;
+    App* app = context;
 
     bool consumed = false;
     
@@ -520,20 +519,20 @@ bool tuning_fork_tuning_scene_on_event(void* context, SceneManagerEvent event) {
     case SceneManagerEventTypeCustom:
         switch(event.event) {
         case TuningForkTuningSelectEvent:
-            tuning_fork_state->playing = !tuning_fork_state->playing;
-            if(tuning_fork_state->playing) {
-                play(tuning_fork_state);
+            app->tuning_fork_state->playing = !app->tuning_fork_state->playing;
+            if(app->tuning_fork_state->playing) {
+                play(app->tuning_fork_state);
             } else {
                 stop();
             }
             consumed = true;
             break;
         case TuningForkTuningPrevEvent:
-            prev_note(tuning_fork_state);
+            prev_note(app->tuning_fork_state);
             consumed = true;
             break;
         case TuningForkTuningNextEvent:
-            next_note(tuning_fork_state);
+            next_note(app->tuning_fork_state);
             consumed = true;
             break;
         }
@@ -634,6 +633,11 @@ static App* app_alloc() {
     return app;
 }
 
+TuningForkState* tuning_fork_state_alloc() {
+    TuningForkState* state = malloc(sizeof(TuningForkState));
+    return state;
+}
+
 /*
 app_free function to free memory allocated for our application. 
 This function will remove all of the views from the view dispatcher, 
@@ -685,8 +689,8 @@ int32_t tuning_fork_app(void* p) {
 
 // I think this is the right place for initializing our variable array, but I could be wrong
 
-    TuningForkState* tuning_fork_state = malloc(sizeof(TuningForkState));
-    tuning_fork_state_init(tuning_fork_state);
+//    TuningForkState* tuning_fork_state = malloc(sizeof(TuningForkState));
+//    tuning_fork_state_init(tuning_fork_state);
 /* 
     tuning_fork_state->mutex = furi_mutex_alloc(FuriMutexTypeNormal);
     if(!tuning_fork_state->mutex) {
@@ -696,6 +700,8 @@ int32_t tuning_fork_app(void* p) {
     } */
 
     App* app = app_alloc();
+    app->tuning_fork_state = tuning_fork_state_alloc();
+    tuning_fork_state_init(app->tuning_fork_state);
 
     Gui* gui = furi_record_open(RECORD_GUI);
     view_dispatcher_attach_to_gui(
