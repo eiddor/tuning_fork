@@ -5,4 +5,9 @@ The two differences will be:
 - Code will use Scenes/Views instead of Viewport
 - Tunings will be split into categories for Guitar, Bass, and Misc
 
-![categories](img/AppCrash.gif)
+TODO
+- Figure out how to handle up/down keys in scenes
+- Figure out inconsistent back button operation
+- Split the data in tunings.h into categories somehow
+
+![categories](img/AppWorks.gif)
