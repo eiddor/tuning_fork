@@ -8,7 +8,7 @@
 //include GUI modules
 #include <gui/gui.h>
 
-//remove these when I'm done
+//MAYBE remove these when I'm done
 #include <gui/elements.h>
 #include <gui/canvas.h>
 
@@ -18,10 +18,12 @@
 #include <gui/modules/widget.h>
 #include <gui/modules/submenu.h>
 
+//MAYBE Do I need these?  Probably not.
 #include <notification/notification.h>
 #include <notification/notification_messages.h>
 
 //define notes and tunings in these files
+//I need to dive into tunings.h and categorize them somehow.
 #include "notes.h"
 #include "tunings.h"
 
@@ -39,13 +41,15 @@ typedef enum {
     TuningForkWidgetView 
 } TuningForkView;
 
-//used by old code
+//used by old code to keep track of which page the user is on - I can probably get rid of this once
+//everything else works
+
 enum Page {
     Tunings, 
     Notes 
 };
 
-//MAYBE declare my categories
+//declare my categories
 
 enum Categories {
     Guitar,
@@ -66,11 +70,16 @@ typedef struct {
 } TuningForkState;
 
 
+// I think this pulls the current tuning variable from tuningForkState 
+//and I assume it's relating it to TUNING from tunings.h, but I'm not sure
+
 static TUNING current_tuning(TuningForkState* tuningForkState) {
     return tuningForkState->tuning;
 }
 
-/* Unused for now
+/*
+// From original code - Unused for now, but I'll uncomment as I need them
+
 static NOTE current_tuning_note(TuningForkState* tuningForkState) {
     return current_tuning(tuningForkState).notes[tuningForkState->current_tuning_note_index];
 }
@@ -86,11 +95,16 @@ static void current_tuning_note_label(TuningForkState* tuningForkState, char* ou
     }
 }
 */
+
+// The name(s) of our current tuning
+
 static void current_tuning_label(TuningForkState* tuningForkState, char* outTuningLabel) {
     for(int i = 0; i < 20; ++i) {
         outTuningLabel[i] = current_tuning(tuningForkState).label[i];
     }
 }
+
+// A bunch more function declarations that I have to understand better
 
 static void updateTuning(TuningForkState* tuning_fork_state) {
     tuning_fork_state->tuning = TuningList[tuning_fork_state->current_tuning_index];
@@ -115,7 +129,7 @@ static void prev_tuning(TuningForkState* tuning_fork_state) {
     updateTuning(tuning_fork_state);
 }
 
-// Old code to be brought in later
+// Old code to be brought in later once I work on the final scene
 /*
 static void next_note(TuningForkState* tuning_fork_state) {
     if(tuning_fork_state->current_tuning_note_index ==
@@ -219,18 +233,18 @@ void tuning_fork_menu_callback(void* context, uint32_t index) {
 
     switch(index) {
     case TuningForkMainMenuSceneGuitar:
-        scene_manager_handle_custom_event(
-            app->scene_manager,
+        view_dispatcher_send_custom_event(
+            app->view_dispatcher,
             TuningForkMainMenuSceneGuitarEvent);
         break;
     case TuningForkMainMenuSceneBass:
-        scene_manager_handle_custom_event(
-            app->scene_manager,
+        view_dispatcher_send_custom_event(
+            app->view_dispatcher,
             TuningForkMainMenuSceneBassEvent);
         break;
     case TuningForkMainMenuSceneMisc:
-        scene_manager_handle_custom_event(
-            app->scene_manager,
+        view_dispatcher_send_custom_event(
+            app->view_dispatcher,
             TuningForkMainMenuSceneMiscEvent);
         break;
     }
@@ -240,22 +254,25 @@ void tuning_fork_category_callback(GuiButtonType result, InputType type, void* c
     App* app = (App*)context;
     UNUSED(type);
     switch (result) {
-        case GuiButtonTypeCenter:
-            scene_manager_handle_custom_event(
-                app->scene_manager, TuningForkCategorySelectEvent);
-            break;
-        case GuiButtonTypeLeft:
-            scene_manager_handle_custom_event(
-                app->scene_manager, TuningForkCategoryPrevEvent);
-            break;
-        case GuiButtonTypeRight:
-            scene_manager_handle_custom_event(
-                app->scene_manager, TuningForkCategoryNextEvent);
-            break;
+    case GuiButtonTypeCenter:
+        view_dispatcher_send_custom_event(
+            app->view_dispatcher, 
+            TuningForkCategorySelectEvent);
+        break;
+    case GuiButtonTypeLeft:
+        view_dispatcher_send_custom_event(
+            app->view_dispatcher, 
+            TuningForkCategoryPrevEvent);
+        break;
+    case GuiButtonTypeRight:
+        view_dispatcher_send_custom_event(
+            app->view_dispatcher, 
+            TuningForkCategoryNextEvent);
+        break;
     }
 }
 
-//functions for each event (enter, event, exit) in each scene
+//functions for each "event" (enter, event, exit) in each scene
 
 //Main menu scene
 /*
@@ -311,9 +328,11 @@ bool tuning_fork_main_menu_scene_on_event(void* context, SceneManagerEvent event
     //TuningForkState* tuning_fork_state = context;
     bool consumed = false;
 
-    switch(event.type) {
+    switch(event.type) 
+    {
     case SceneManagerEventTypeCustom:
-        switch(event.event) {
+        switch(event.event) 
+        {
         case TuningForkMainMenuSceneGuitarEvent:
             //tuning_fork_state->category = Guitar;
             scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
@@ -328,6 +347,9 @@ bool tuning_fork_main_menu_scene_on_event(void* context, SceneManagerEvent event
             //tuning_fork_state->category = Misc;
             scene_manager_next_scene(app->scene_manager, TuningForkCategoryScene);
             consumed = true;
+            break;
+        default:
+            consumed = false;
             break;
         }
         break;
@@ -356,12 +378,11 @@ void tuning_fork_category_scene_on_enter(void* context) {
      widget_add_string_element(
         app->widget,
         25,
-        15,
+        25,
         AlignCenter,
-        AlignCenter,
+        AlignBottom,
         FontPrimary,
-        "blah blah"
-        //tuningLabel
+        tuningLabel
     );
  
     widget_add_button_element(
@@ -384,6 +405,7 @@ void tuning_fork_category_scene_on_enter(void* context) {
         "Next",
         tuning_fork_category_callback,
         app);
+    view_dispatcher_switch_to_view(app->view_dispatcher, TuningForkWidgetView);
 }
 
 bool tuning_fork_category_scene_on_event(void* context, SceneManagerEvent event) {
