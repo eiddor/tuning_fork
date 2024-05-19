@@ -1,3 +1,5 @@
 - Figure out how to handle up/down keys in scenes
-- Figure out inconsistent back button operation
-- Split the data in tunings.h into categories somehow
+- ~~Figure out inconsistent back button operation~~
+- ~~Split the data in tunings.h into categories somehow~~
+- Get categories working
+- Add "<" and ">" to Categories page
