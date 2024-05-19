@@ -43,16 +43,17 @@ typedef enum { TuningForkSubmenuView, TuningForkWidgetView } TuningForkView;
 
 enum Page { Tunings, Notes };
 
-//declare my tuning categories
+//declare my tuning categories - I'm doing this in tunings.h now hooray
 
-enum Categories { Guitar, Bass, Misc };
+//enum Categories { Guitar, Bass, Misc };
 
 //Declare my TuningForkState struct for tracking state
 typedef struct {
     FuriMutex* mutex;
     bool playing;
     enum Page page;
-    enum Categories category;
+    //might need an enum before this next line
+    TuningCategory category;
     int current_tuning_note_index;
     int current_tuning_index;
     float volume;

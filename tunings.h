@@ -3,6 +3,12 @@
 #ifndef TUNINGS
 #define TUNINGS
 
+typedef enum {
+    Guitar,
+    Bass,
+    Misc,
+} TuningCategory;
+
 typedef struct {
     char label[20];
     float frequency;
@@ -10,12 +16,14 @@ typedef struct {
 
 typedef struct {
     char label[20];
+    TuningCategory category;
     int notes_length;
     NOTE notes[20];
 } TUNING;
 
 const TUNING TuningForks = {
     "Tuning forks",
+    Misc,
     6,
     {
         {"Common A4 (440)", 440.00f},
@@ -28,6 +36,7 @@ const TUNING TuningForks = {
 
 const TUNING ScientificPitch = {
     "Scientific pitch",
+    Misc,
     12,
     {{"C0 (16Hz)", 16.0f},
      {"C1 (32Hz)", 32.0f},
@@ -44,6 +53,7 @@ const TUNING ScientificPitch = {
 
 const TUNING GuitarStandard6 = {
     "Guitar Standard 6",
+    Guitar,
     6,
     {{"String 1", E4},
      {"String 2", B3},
@@ -54,6 +64,7 @@ const TUNING GuitarStandard6 = {
 
 const TUNING GuitarDropD6 = {
     "Guitar Drop D 6",
+    Guitar,
     6,
     {{"String 1", E4},
      {"String 2", B3},
@@ -64,6 +75,7 @@ const TUNING GuitarDropD6 = {
 
 const TUNING GuitarD6 = {
     "Guitar D 6",
+    Guitar,
     6,
     {{"String 1", D4},
      {"String 2", A3},
@@ -74,6 +86,7 @@ const TUNING GuitarD6 = {
 
 const TUNING GuitarDropC6 = {
     "Guitar Drop C 6",
+    Guitar,
     6,
     {{"String 1", D4},
      {"String 2", A3},
@@ -84,6 +97,7 @@ const TUNING GuitarDropC6 = {
 
 const TUNING GuitarStandard7 = {
     "Guitar Standard 7",
+    Guitar,
     7,
     {{"String 1", E4},
      {"String 2", B3},
@@ -95,46 +109,56 @@ const TUNING GuitarStandard7 = {
 
 const TUNING BassStandard4 = {
     "Bass Standard 4",
+    Bass,
     4,
     {{"String 1", G2}, {"String 2", D2}, {"String 3", A1}, {"String 4", E1}}};
 
 const TUNING BassStandardTenor4 = {
     "Bass Stand Tenor 4",
+    Bass,
     4,
     {{"String 1", C3}, {"String 2", G2}, {"String 3", D2}, {"String 4", A1}}};
 
 const TUNING BassStandard5 = {
     "Bass Standard 5",
+    Bass,
     5,
     {{"String 1", G2}, {"String 2", D2}, {"String 3", A1}, {"String 4", E1}, {"String 5", B0}}};
 
 const TUNING BassStandardTenor5 = {
     "Bass Stand Tenor 5",
+    Bass,
     5,
     {{"String 1", C3}, {"String 2", G2}, {"String 3", D2}, {"String 4", A1}, {"String 5", E1}}};
 
 const TUNING BassDropD4 = {
     "Bass Drop D 4",
+    Bass,
     4,
     {{"String 1", G2}, {"String 2", D2}, {"String 3", A1}, {"String 4", D1}}};
 
 const TUNING BassD4 = {
     "Bass D 4",
+    Bass,
     4,
     {{"String 1", F2}, {"String 2", C2}, {"String 3", G1}, {"String 4", D1}}};
 
 const TUNING BassDropA5 = {
     "Bass Drop A 5",
+    Bass,
     5,
     {{"String 1", G2}, {"String 2", D2}, {"String 3", A1}, {"String 4", E1}, {"String 5", A0}}};
 
 const TUNING UkuleleStandard4 = {
-    "Ukulele Standard 4", 4, {
+    "Ukulele Standard 4",
+    Misc,
+    4,
+    {
     {"String 1", A4},
     {"String 2", E4},
     {"String 3", C4},
     {"String 4", G4}
-  }
+    }
 };
 
 #define TUNINGS_COUNT 15
