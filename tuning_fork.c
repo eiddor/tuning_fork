@@ -26,6 +26,7 @@
 //I need to dive into tunings.h and categorize them somehow.
 #include "notes.h"
 #include "tunings.h"
+#include "thingy.h"
 
 //define our scenes
 typedef enum {
@@ -298,11 +299,23 @@ void tuning_fork_main_menu_scene_on_enter(void* context) {
     submenu_reset(app->submenu);
     submenu_set_header(app->submenu, "Tuning Categories");
     submenu_add_item(
-        app->submenu, "Guitar", TuningForkMainMenuSceneGuitar, tuning_fork_menu_callback, app);
+        app->submenu, 
+        "Guitar", 
+        TuningForkMainMenuSceneGuitar, 
+        tuning_fork_menu_callback, 
+        app);
     submenu_add_item(
-        app->submenu, "Bass", TuningForkMainMenuSceneBass, tuning_fork_menu_callback, app);
+        app->submenu, 
+        "Bass", 
+        TuningForkMainMenuSceneBass, 
+        tuning_fork_menu_callback, 
+        app);
     submenu_add_item(
-        app->submenu, "Misc", TuningForkMainMenuSceneMisc, tuning_fork_menu_callback, app);
+        app->submenu, 
+        "Misc", 
+        TuningForkMainMenuSceneMisc, 
+        tuning_fork_menu_callback, 
+        app);
     view_dispatcher_switch_to_view(app->view_dispatcher, TuningForkSubmenuView);
 }
 
@@ -432,12 +445,21 @@ static void tuning_fork_tuning_scene_helper(App* context) {
         "Prev",
         tuning_fork_tuning_callback,
         app);
-    widget_add_button_element(
-        app->widget,
-        GuiButtonTypeCenter,
-        "Play",
-        tuning_fork_tuning_callback,
-        app);
+    if(app->tuning_fork_state->playing) {
+        widget_add_button_element(
+            app->widget,
+            GuiButtonTypeCenter,
+            "Play",
+            tuning_fork_tuning_callback,
+            app);
+        } else {
+        widget_add_button_element(
+            app->widget,
+            GuiButtonTypeCenter,
+            "Stop",
+            tuning_fork_tuning_callback,
+            app);
+        }
     widget_add_button_element(
         app->widget,
         GuiButtonTypeRight,
@@ -466,6 +488,7 @@ bool tuning_fork_tuning_scene_on_event(void* context, SceneManagerEvent event) {
             } else {
                 stop();
             }
+            tuning_fork_tuning_scene_helper(app);
             consumed = true;
             break;
         case TuningForkTuningPrevEvent:
@@ -617,7 +640,7 @@ static void tuning_fork_state_init(TuningForkState* const tuning_fork_state) {
     tuning_fork_state->category = Guitar;
     tuning_fork_state->volume = 1.0f;
     tuning_fork_state->tuning = GuitarStandard6;
-    tuning_fork_state->current_tuning_index = 0;
+    tuning_fork_state->current_tuning_index = 2;
     tuning_fork_state->current_tuning_note_index = 0;
 }
 
