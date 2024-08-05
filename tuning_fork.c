@@ -60,35 +60,38 @@ typedef struct {
     TUNING tuning;
 } TuningForkState;
 
-//Function to get current tuning
+// Function to get current tuning
 static TUNING current_tuning(TuningForkState* tuningForkState) {
     return tuningForkState->tuning;
 }
 
-//Function to get current tuning note/string (as in string on an instrument)
+// Function to get current tuning note/string (as in string on an instrument)
 static NOTE current_tuning_note(TuningForkState* tuningForkState) {
     return current_tuning(tuningForkState).notes[tuningForkState->current_tuning_note_index];
 }
 
-//Get the current note's frequency from notes.h
+// Get the current note's frequency from notes.h
 static float current_tuning_note_freq(TuningForkState* tuningForkState) {
     return current_tuning_note(tuningForkState).frequency;
 }
 
-//Get the current note's name
+// Get the current note's name
 static void current_tuning_note_label(TuningForkState* tuningForkState, char* outNoteLabel) {
     for(int i = 0; i < 20; ++i) {
         outNoteLabel[i] = current_tuning_note(tuningForkState).label[i];
     }
 }
 
-// The name(s) of our current tuning
+// The name(s) of our current tuning based on our current tuning category
+// Added this for the category hack
+
 
 static void current_tuning_label(TuningForkState* tuningForkState, char* outTuningLabel) {
     for(int i = 0; i < 20; ++i) {
         outTuningLabel[i] = current_tuning(tuningForkState).label[i];
     }
 }
+
 
 // Updates the current tuning and tuning note
 static void updateTuning(TuningForkState* tuning_fork_state) {
