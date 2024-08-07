@@ -218,10 +218,10 @@ const TUNING UkuleleStandard4 = {
     Misc,
     4,
     {
-    {"String 1", A4},
-    {"String 2", E4},
-    {"String 3", C4},
-    {"String 4", G4}
+        {"String 1", A4},
+        {"String 2", E4},
+        {"String 3", C4},
+        {"String 4", G4}
     }
 };
 
