@@ -3,24 +3,28 @@
 #ifndef TUNINGS
 #define TUNINGS
 
+// Enumeration for different tuning categories
 typedef enum {
-    Guitar,
-    Bass,
-    Misc,
+    Guitar, // Guitar tuning
+    Bass,   // Bass tuning
+    Misc,   // Miscellaneous tuning
 } TuningCategory;
 
+// Structure to represent a musical note
 typedef struct {
-    char label[20];
-    float frequency;
+    char label[20];  // Label for the note
+    float frequency; // Frequency of the note
 } NOTE;
 
+// Structure to represent a tuning
 typedef struct {
-    char label[20];
-    TuningCategory category;
-    int notes_length;
-    NOTE notes[20];
+    char label[20];          // Label for the tuning
+    TuningCategory category; // Category of the tuning
+    int notes_length;        // Number of notes in the tuning
+    NOTE notes[20];          // Array of notes in the tuning
 } TUNING;
 
+// Predefined tuning for tuning forks
 const TUNING TuningForks = {
     "Tuning forks",
     Misc,
@@ -35,6 +39,7 @@ const TUNING TuningForks = {
     }
 };
 
+// Predefined tuning for scientific pitch
 const TUNING ScientificPitch = {
     "Scientific pitch",
     Misc,
@@ -55,6 +60,7 @@ const TUNING ScientificPitch = {
     }
 };
 
+// Predefined tuning for standard 6-string guitar
 const TUNING GuitarStandard6 = {
     "Guitar Standard 6",
     Guitar,
@@ -69,6 +75,7 @@ const TUNING GuitarStandard6 = {
     }
 };
 
+// Predefined tuning for drop D 6-string guitar
 const TUNING GuitarDropD6 = {
     "Guitar Drop D 6",
     Guitar,
@@ -83,6 +90,7 @@ const TUNING GuitarDropD6 = {
     }
 };
 
+// Predefined tuning for D 6-string guitar
 const TUNING GuitarD6 = {
     "Guitar D 6",
     Guitar,
@@ -97,6 +105,7 @@ const TUNING GuitarD6 = {
     }
 };
 
+// Predefined tuning for drop C 6-string guitar
 const TUNING GuitarDropC6 = {
     "Guitar Drop C 6",
     Guitar,
@@ -111,6 +120,7 @@ const TUNING GuitarDropC6 = {
     }
 };
 
+// Predefined tuning for standard 7-string guitar
 const TUNING GuitarStandard7 = {
     "Guitar Standard 7",
     Guitar,
@@ -126,6 +136,7 @@ const TUNING GuitarStandard7 = {
     }
 };
 
+// Predefined tuning for standard 4-string bass
 const TUNING BassStandard4 = {
     "Bass Standard 4",
     Bass,
@@ -138,6 +149,7 @@ const TUNING BassStandard4 = {
     }
 };
 
+// Predefined tuning for standard tenor 4-string bass
 const TUNING BassStandardTenor4 = {
     "Bass Stand Tenor 4",
     Bass,
@@ -150,6 +162,7 @@ const TUNING BassStandardTenor4 = {
     }
 };
 
+// Predefined tuning for standard 5-string bass
 const TUNING BassStandard5 = {
     "Bass Standard 5",
     Bass,
@@ -163,6 +176,7 @@ const TUNING BassStandard5 = {
     }
 };
 
+// Predefined tuning for standard tenor 5-string bass
 const TUNING BassStandardTenor5 = {
     "Bass Stand Tenor 5",
     Bass,
@@ -176,6 +190,7 @@ const TUNING BassStandardTenor5 = {
     }
 };
 
+// Predefined tuning for drop D 4-string bass
 const TUNING BassDropD4 = {
     "Bass Drop D 4",
     Bass,
@@ -188,6 +203,7 @@ const TUNING BassDropD4 = {
     }
 };
 
+// Predefined tuning for D 4-string bass
 const TUNING BassD4 = {
     "Bass D 4",
     Bass,
@@ -200,6 +216,7 @@ const TUNING BassD4 = {
     }
 };
 
+// Predefined tuning for drop A 5-string bass
 const TUNING BassDropA5 = {
     "Bass Drop A 5",
     Bass,
@@ -213,6 +230,7 @@ const TUNING BassDropA5 = {
     }
 };
 
+// Predefined tuning for standard 4-string ukulele
 const TUNING UkuleleStandard4 = {
     "Ukulele Standard 4",
     Misc,
@@ -225,8 +243,10 @@ const TUNING UkuleleStandard4 = {
     }
 };
 
+// Number of predefined tunings
 #define TUNINGS_COUNT 15
 
+// Array of all predefined tunings
 TUNING TuningList[TUNINGS_COUNT] = {
     ScientificPitch,
     TuningForks,

@@ -36,16 +36,18 @@ typedef enum {
 } TuningForkScene;
 
 //define our views
-typedef enum { TuningForkSubmenuView, TuningForkWidgetView } TuningForkView;
+typedef enum { 
+    TuningForkSubmenuView, 
+    TuningForkWidgetView 
+} TuningForkView;
 
 //used by old code to keep track of which page the user is on - I can probably get rid of this once
 //everything else works but this could be useful for development
 
-enum Page { Tunings, Notes };
-
-//declare my tuning categories - I'm doing this in tunings.h now hooray
-
-//enum Categories { Guitar, Bass, Misc };
+enum Page { 
+    Tunings, 
+    Notes 
+};
 
 //Declare my TuningForkState struct for tracking state
 typedef struct {
@@ -63,6 +65,12 @@ typedef struct {
 // Function to get current tuning
 static TUNING current_tuning(TuningForkState* tuningForkState) {
     return tuningForkState->tuning;
+}
+
+// Function to get current tuning category
+
+static TuningCategory get_current_tuning_category(TuningForkState* tuningForkState) {
+    return current_tuning(tuningForkState).category;
 }
 
 // Function to get current tuning note/string (as in string on an instrument)
@@ -83,15 +91,12 @@ static void current_tuning_note_label(TuningForkState* tuningForkState, char* ou
 }
 
 // The name(s) of our current tuning based on our current tuning category
-// Added this for the category hack
-
 
 static void current_tuning_label(TuningForkState* tuningForkState, char* outTuningLabel) {
     for(int i = 0; i < 20; ++i) {
         outTuningLabel[i] = current_tuning(tuningForkState).label[i];
     }
 }
-
 
 // Updates the current tuning and tuning note
 static void updateTuning(TuningForkState* tuning_fork_state) {
