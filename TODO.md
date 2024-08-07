@@ -2,4 +2,5 @@
 - ~~Figure out inconsistent back button operation~~
 - ~~Split the data in tunings.h into categories somehow~~
 - Get categories working
+- Figure out how to get categories to persist and set default tuning for each category
 - Add "<" and ">" to Categories page
