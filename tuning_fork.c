@@ -90,7 +90,7 @@ static void current_tuning_note_label(TuningForkState* tuningForkState, char* ou
     }
 }
 
-// The name(s) of our current tuning based on our current tuning category
+// The name of our current tuning
 
 static void current_tuning_label(TuningForkState* tuningForkState, char* outTuningLabel) {
     for(int i = 0; i < 20; ++i) {
