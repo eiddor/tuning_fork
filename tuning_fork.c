@@ -2,7 +2,7 @@
 #include <furi.h>
 #include <furi_hal.h>
 #include <input/input.h>
-#include <string.h>
+//#include <string.h>
 #include <stdlib.h>
 
 //include GUI modules
@@ -24,7 +24,7 @@
 
 //define notes and tunings in these files
 //I need to dive into tunings.h and categorize them somehow.
-#include "notes.h"
+//#include "notes.h"
 #include "tunings.h"
 
 //define our scenes
@@ -127,7 +127,7 @@ static void prev_tuning(TuningForkState* tuning_fork_state) {
 //Move to the next note (loop around if at the end)
 static void next_note(TuningForkState* tuning_fork_state) {
     if(tuning_fork_state->current_tuning_note_index ==
-       current_tuning(tuning_fork_state).notes_length - 1) {
+        current_tuning(tuning_fork_state).notes_length - 1) {
         tuning_fork_state->current_tuning_note_index = 0;
     } else {
         tuning_fork_state->current_tuning_note_index += 1;
